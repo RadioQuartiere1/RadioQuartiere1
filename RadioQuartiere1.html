@@ -1,155 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RadioQuartiere1-Telebruzzano</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: url('https://i.postimg.cc/kX67wKd0/image.png') no-repeat center center fixed;
-            color: #fff;
-            text-align: center;
-            background-size: cover;
-            margin: 0;
-            padding: 0;
-        }
-        #player-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-        }
-        #cover {
-            width: 100%;
-            border-radius: 10px;
-        }
-        .info {
-            margin: 10px 0;
-        }
-        #volume-control {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-        #volume-slider {
-            width: 80%;
-        }
-        #radio-name {
-            margin-bottom: 20px;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RadioQuartiere1 Mini Player (No Audio)</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #mini-player {
+      background: rgba(14, 11, 90, 0.85);
+      padding: 15px;
+      width: 260px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      border: 2px solid;
+      border-image: linear-gradient(45deg, #ff416c, #ff4b2b, #1dd1a1, #54a0ff) 1;
+      border-radius: 0;
+    }
+
+    #mini-player img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 0;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
+    }
+
+    #mini-player img:hover {
+      transform: scale(1.03);
+    }
+
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1em;
+      margin: 5px 0;
+    }
+
+    .bar {
+      font-size: 1.2em;
+      color: #1dd1a1;
+      padding: 0 4px;
+    }
+
+    .scrolling-title-container {
+      overflow: hidden;
+      white-space: nowrap;
+      width: 100%;
+      text-align: left;
+    }
+
+    .scrolling-title {
+      display: inline-block;
+      animation: scroll-left 10s linear infinite;
+      padding-left: 100%;
+    }
+
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    .artist {
+      font-size: 0.9em;
+      color: #ccc;
+      margin-top: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #station-name {
+      margin-top: 10px;
+      font-size: 0.95em;
+      color: #1dd1a1;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+  </style>
 </head>
 <body>
-    <div id="player-container">
-        <div id="radio-name">RadioQuartiere-TeleBruzzano</div>
-        <img id="cover" src="https://i.postimg.cc/kX67wKd0/image.png" alt="Cover Image">
-        <div class="info">
-            <h2 id="title"></h2>
-            <p id="artist"></p>
-        </div>
-        <button id="play-button">Play</button>
-        <button id="stop-button">Stop</button>
-        <div id="volume-control">
-            <label for="volume-slider">Volume:</label>
-            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
-            <span id="volume-level">100%</span>
-        </div>
-        <p id="volume-message"></p>
+  <div id="mini-player">
+    <img id="mini-cover" src="https://i.postimg.cc/q7QTQq1s/ioooo.png" alt="Cover" />
+    
+    <div class="title-wrapper">
+      <span class="bar">|</span>
+      <div class="scrolling-title-container">
+        <div class="scrolling-title" id="mini-title"></div>
+      </div>
+      <span class="bar">|</span>
     </div>
+    
+    <div class="artist" id="mini-artist"></div>
+    <div id="station-name">RADIOQUARTIERE1</div>
+  </div>
 
-    <script>
-        const nowPlayingUrl = "https://zenoplay.zenomedia.com/api/zenofm/nowplaying/urz5widop6ztv";
-        const defaultImage = "https://i.postimg.cc/kX67wKd0/image.png";
-        const player = new Audio("https://stream-174.zeno.fm/urz5widop6ztv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ1cno1d2lkb3A2enR2IiwiaG9zdCI6InN0cmVhbS0xNzQuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IjRCUTNLX3Q5VE8yeVlMZXRKVVdEMGciLCJpYXQiOjE3MjIyNzA1NzMsImV4cCI6MTcyMjI3MDYzM30.rFVtMS-Ytay03p6nHQH2YCsBpZk3QP5ay8FCEpewG1I");
-        const coverImg = document.getElementById('cover');
-        const titleElem = document.getElementById('title');
-        const artistElem = document.getElementById('artist');
-        const playButton = document.getElementById('play-button');
-        const stopButton = document.getElementById('stop-button');
-        const volumeSlider = document.getElementById('volume-slider');
-        const volumeLevel = document.getElementById('volume-level');
-        const volumeMessage = document.getElementById('volume-message');
+  <script>
+    const miniTitle = document.getElementById('mini-title');
+    const miniArtist = document.getElementById('mini-artist');
+    const miniCover = document.getElementById('mini-cover');
 
-        async function fetchNowPlaying() {
-            try {
-                const response = await fetch(nowPlayingUrl);
-                const data = await response.json();
-                const { title, artist } = data;
+    const defaultCover = 'https://i.postimg.cc/q7QTQq1s/ioooo.png';
 
-                titleElem.textContent = title || "";
-                artistElem.textContent = artist || "";
+    // Zeno.fm metadata
+    const source = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/urz5widop6ztv");
 
-                fetchCover(title, artist);
-            } catch (error) {
-                console.error("Error fetching now playing:", error);
-                titleElem.textContent = "Error loading data";
-                artistElem.textContent = "";
-                resetToDefault();
-            }
-        }
+    source.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        const rawTitle = data.streamTitle || "Sconosciuto";
+        const cleanTitle = rawTitle.replace(/<\/?[^>]+(>|$)/g, "").trim();
 
-        async function fetchCover(title, artist) {
-            const query = encodeURIComponent(`${title} ${artist}`);
-            const itunesUrl = `https://itunes.apple.com/search?term=${query}&limit=1&entity=song`;
+        miniTitle.textContent = cleanTitle;
+        miniArtist.textContent = ""; // opzionalmente puoi parsare artista e titolo
 
-            try {
-                const response = await fetch(itunesUrl);
-                const data = await response.json();
+        fetchCoverFromiTunes(cleanTitle);
+      } catch (err) {
+        console.error("Errore parsing metadata:", err);
+      }
+    };
 
-                if (data.results && data.results.length > 0) {
-                    const coverUrl = data.results[0].artworkUrl100.replace('100x100', '300x300');
-                    coverImg.src = coverUrl;
-                    document.body.style.background = `url('${coverUrl}') no-repeat center center fixed`;
-                    document.body.style.backgroundSize = "cover";
-                } else {
-                    resetToDefault();
-                }
-            } catch (error) {
-                console.error("Error fetching cover:", error);
-                resetToDefault();
-            }
-        }
-
-        function resetToDefault() {
-            coverImg.src = defaultImage;
-            document.body.style.background = `url('${defaultImage}') no-repeat center center fixed`;
-            document.body.style.backgroundSize = "cover";
-        }
-
-        playButton.addEventListener('click', () => {
-            player.play();
+    function fetchCoverFromiTunes(query) {
+      const url = `https://corsproxy.io/?https://itunes.apple.com/search?term=${encodeURIComponent(query)}&limit=1&entity=song`;
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (data.results && data.results.length > 0) {
+            const result = data.results[0];
+            const coverUrl = result.artworkUrl100.replace("100x100", "300x300");
+            miniCover.src = coverUrl;
+          } else {
+            miniCover.src = defaultCover;
+          }
+        })
+        .catch(() => {
+          miniCover.src = defaultCover;
         });
-
-        stopButton.addEventListener('click', () => {
-            player.pause();
-            player.currentTime = 0;
-        });
-
-        volumeSlider.addEventListener('input', (e) => {
-            const volume = e.target.value;
-            player.volume = volume;
-            volumeLevel.textContent = `${Math.round(volume * 100)}%`;
-        });
-
-        // Autoplay the music on load
-        window.onload = () => {
-            player.volume = 1; // Set initial volume to 100%
-            player.play().catch(error => {
-                // Handle potential autoplay block error
-                console.error("Autoplay failed:", error);
-            });
-        };
-
-        fetchNowPlaying();
-        setInterval(fetchNowPlaying, 20000);
-    </script>
+    }
+  </script>
 </body>
 </html>

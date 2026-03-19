@@ -1,214 +1,301 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="https://i.postimg.cc/q7QTQq1s/ioooo.png">
-  <title>RadioQuartiere1Telebruzzano</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: url('https://i.postimg.cc/q7QTQq1s/ioooo.png') no-repeat center center;
-      background-size: cover;
-      color: #fff;
-      text-align: center;
-      padding: 0;
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      transition: background-image 0.5s ease-in-out;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radio Quartiere 1</title>
+<link rel="shortcut icon" href="https://i.postimg.cc/bvzGtQzp/a-Aa-A.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0f; 
+  --card:#1a1a24; 
+  --accent:#0066ff; /* colore play */
+  --accent2:#3399ff; 
+  --text:#f0f0f5; 
+  --muted:#6b6b80; 
+  --border:#2a2a38;
+}
 
-    #player {
-      margin-top: 30px;
-      width: 90%;
-      max-width: 600px;
-      height: 80%;
-      max-height: 700px;
-      background: rgba(30, 30, 30, 0.9);
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      animation: fadeIn 1s ease-in-out;
-      border: 5px solid;
-      border-image-source: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
-      border-image-slice: 1;
-      animation: rainbow-border 3s infinite linear;
-    }
+*{margin:0;padding:0;box-sizing:border-box;}
 
-    @keyframes rainbow-border {
-      0% {
-        border-image-source: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
-      }
-      100% {
-        border-image-source: linear-gradient(405deg, red, orange, yellow, green, blue, indigo, violet);
-      }
-    }
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
 
-    #radio-title {
-      color: white;
-      font-size: 1.1em;
-      font-weight: bold;
-      margin-bottom: 15px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
+body.bg-cover::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:var(--bg-image);
+  background-size:cover;
+  background-position:center;
+  filter:blur(20px) brightness(0.3);
+  z-index:0;
+}
 
-    #cover {
-      min-width: 265px;
-      max-width: 265px;
-      min-height: 265px;
-      max-height: 265px;
-      border-radius: 17px;
-      object-fit: cover;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      transition: transform 0.3s ease-in-out;
-    }
+.player-wrap{
+  position:relative;
+  z-index:1;
+  width:400px;
+  padding:20px;
+}
 
-    #cover:hover {
-      transform: scale(1.05);
-    }
+.station-label{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;
+  text-align:center;
+  margin-bottom:20px;
+  color:white;
+}
 
-    #title {
-      font-size: 1.5em;
-      margin: 9px 0;
-      animation: slideDown 0.8s ease-out;
-    }
+.cover-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:1;
+  border-radius:18px;
+  overflow:hidden;
+  margin-bottom:28px;
+  background:var(--card);
+}
 
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+.cover-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  opacity:0;
+  transition:.5s;
+}
 
-    #artist {
-      font-size: 1.2em;
-      color: #ccc;
-      margin-bottom: 10px;
-    }
+.cover-fallback{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    #audio-controls {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+.cover-fallback img{
+  width:280px; 
+  max-width:95%;
+  object-fit:contain;
+}
 
-    #volume-control {
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      width: 80%;
-    }
+.playing-badge{
+  position:absolute;
+  top:12px;right:12px;
+  background: rgba(255,60,90,0.9);
+  border-radius:20px;
+  padding:5px 12px;
+  font-size:10px;
+  display:none;
+  align-items:center;
+  gap:6px;
+  font-family:'Bebas Neue',sans-serif;
+}
+.playing-badge.visible{display:flex;}
+.dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:white;
+  animation:pulse 1s ease infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 
-    #volume-slider {
-      width: 70%;
-      height: 5px;
-      background: #ccc;
-      border-radius: 5px;
-      appearance: none;
-      outline: none;
-      transition: background 0.3s;
-    }
+.track-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;
+  text-align:center;
+  margin-bottom:6px;
+}
 
-    #volume-slider::-webkit-slider-thumb {
-      appearance: none;
-      width: 15px;
-      height: 15px;
-      background: #6200ea;
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    }
+.listeners-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin-bottom:20px;
+  font-size:12px;
+  color:var(--muted);
+}
+.listeners-row svg{color:var(--accent);opacity:.7;}
+#listeners-count{color:var(--text);font-weight:500;}
 
-    #volume-slider:hover {
-      background: #aaa;
-    }
+.waveform{
+  display:flex;
+  align-items:center;
+  gap:3px;
+  height:32px;
+  margin-bottom:20px;
+}
+.bar{
+  flex:1;
+  background:var(--border);
+  border-radius:2px;
+  min-height:3px;
+  transition: height 0.1s ease;
+}
 
-    #volume-level {
-      font-size: 1.2em;
-      color: #fff;
-    }
+.controls{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:20px;
+  justify-content:center;
+}
 
-    button {
-      padding: 10px 20px;
-      font-size: 1em;
-      cursor: pointer;
-      background: #6200ea;
-      color: #fff;
-      border: 3px solid;
-      border-image-source: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
-      border-image-slice: 1;
-      border-radius: 5px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      transition: background 0.3s, transform 0.2s;
-    }
+.btn-play{
+  width:60px;height:60px;
+  border-radius:50%;
+  background:var(--accent);
+  border:none;
+  cursor:pointer;
+  font-size:24px;
+  color:white;
+  flex-shrink:0;
+}
 
-    button:hover {
-      background: #3700b3;
-      transform: scale(1.1);
-    }
+.volume-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:1; /* barra più lunga */
+}
+input[type=range]{flex:1;height:4px;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:14px;height:14px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
 
-    button:active {
-      transform: scale(1.05);
-    }
-
-    #volume-message {
-      margin-top: 10px;
-      color: #ffcc00;
-      font-size: 1em;
-      font-weight: bold;
-    }
-
-    #control-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      width: 100%;
-    }
-
-    #play-button {
-      margin-right: 20px;
-    }
-  </style>
+.status{text-align:center;font-size:12px;color:var(--muted);}
+</style>
 </head>
 <body>
-  <div id="player">
-    <div id="radio-title">RadioQuartiere1Telebruzzano</div>
-    <img id="cover" src="https://i.postimg.cc/q7QTQq1s/ioooo.png" alt="Album Cover">
-    <div id="title"></div>
-    <div id="artist"></div>
-    <div id="audio-controls">
-      <div id="volume-control">
-        <span id="volume-level">100%</span>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
-      </div>
-      <div id="control-buttons">
-        <button id="play-button">Play</button>
-        <button id="stop-button">Stop</button>
-      </div>
-      <div id="volume-message"></div>
+
+<div class="player-wrap">
+
+  <div class="station-label">RadioQuartiere1</div>
+
+  <div class="cover-wrap">
+    <img id="cover-img" class="cover-img" src="">
+    <div class="cover-fallback" id="cover-fallback">
+      <img src="https://i.postimg.cc/bvzGtQzp/a-Aa-A.png" alt="Logo fallback">
+    </div>
+    <div class="playing-badge" id="playing-badge"><div class="dot"></div>ON AIR</div>
+  </div>
+
+  <div class="track-title" id="track-title">Caricamento…</div>
+
+  <div class="listeners-row">
+    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    <span id="listeners-count">—</span> ascoltatori in diretta
+  </div>
+
+  <div class="waveform" id="waveform"></div>
+
+  <div class="controls">
+    <button class="btn-play" id="btn-play" onclick="togglePlay()">▶</button>
+    <div class="volume-wrap">
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8" oninput="audio.volume=this.value">
     </div>
   </div>
 
-  <audio id="radio" src="https://stream-173.zeno.fm/urz5widop6ztv" preload="auto"></audio>
+  <div class="status" id="status">Premi play per ascoltare</div>
 
-  <script>
-    (function(_0x7ee798,_0x398d7e){const _0x463768=_0x7ee798();while(!![]){try{const _0x22830f=-parseInt(_0x28cf(0x1a7,'cfib'))/0x1+parseInt(_0x5c28(0x192))/0x2+parseInt(_0x5c28(0x178))/0x3+-parseInt(_0x28cf(0x1a6,'X@5Z'))/0x4+-parseInt(_0x4e0d(0x1b5))/0x5*(-parseInt(_0x4e0d(0x197))/0x6)+parseInt(_0x4e0d(0x156))/0x7*(-parseInt(_0x4e0d(0x17d))/0x8)+parseInt(_0x5c28(0x191))/0x9;if(_0x22830f===_0x398d7e)break;else _0x463768['push'](_0x463768['shift']());}catch(_0x106d74){_0x463768['push'](_0x463768['shift']());}}}(_0x5bf3,0xc2ce5));const audio=document['getElementById'](_0x4e0d(0x164)),playBtn=document['getElementById'](_0x28cf(0x16c,'O#J6')),stopBtn=document[_0x28cf(0x165,')]Sl')](_0x5c28(0x180)),volumeSlider=document[_0x28cf(0x165,')]Sl')]('volume-slider'),volumeLevel=document[_0x28cf(0x165,')]Sl')](_0x4e0d(0x16f)),titleDisplay=document[_0x28cf(0x18e,'!wdQ')](_0x28cf(0x185,'SQZ&')),artistDisplay=document['getElementById'](_0x28cf(0x1b1,'soQ5')),coverImg=document['getElementById'](_0x4e0d(0x173)),defaultCover=_0x28cf(0x167,'BuH]'),defaultBackground=defaultCover;let targetVolume=parseFloat(volumeSlider['value']);audio[_0x4e0d(0x166)]=0x0,audio[_0x4e0d(0x1a8)]()[_0x5c28(0x170)](()=>fadeAudio(targetVolume,0x3e8)),playBtn[_0x4e0d(0x15c)]('click',()=>{audio[_0x28cf(0x190,'^w#9')]=0x0,audio[_0x4e0d(0x1a8)]()['then'](()=>fadeAudio(targetVolume,0x3e8));}),stopBtn['addEventListener'](_0x4e0d(0x1ae),()=>{fadeAudio(0x0,0x1f4,()=>audio[_0x28cf(0x18b,'M^xD')]());}),volumeSlider[_0x28cf(0x16d,'gka^')]('input',()=>{targetVolume=parseFloat(volumeSlider[_0x4e0d(0x172)]),audio[_0x28cf(0x190,'^w#9')]=targetVolume,volumeLevel['textContent']=Math[_0x4e0d(0x1b3)](targetVolume*0x64)+'%';});function fadeAudio(_0x2d75e5,_0x2fbb6e=0x3e8,_0x584661){const _0x367f52=(function(){let _0x1726db=!![];return function(_0xa3e117,_0x3b21a7){const _0x973d60=_0x1726db?function(){if(_0x3b21a7){const _0x22b278=_0x3b21a7[_0x4e0d(0x18a)](_0xa3e117,arguments);return _0x3b21a7=null,_0x22b278;}}:function(){};return _0x1726db=![],_0x973d60;};}()),_0x1d73f4=_0x367f52(this,function(){return _0x1d73f4['toString']()['search']('(((.+)+)+)+$')[_0x28cf(0x17b,'%D@x')]()['constructor'](_0x1d73f4)[_0x5c28(0x19d)](_0x4e0d(0x181));});_0x1d73f4();const _0x1af80d=(function(){let _0x4b85a0=!![];return function(_0x3a8f16,_0x115626){const _0x429ea4=_0x4b85a0?function(){if(_0x115626){const _0x1fdb4a=_0x115626[_0x4e0d(0x18a)](_0x3a8f16,arguments);return _0x115626=null,_0x1fdb4a;}}:function(){};return _0x4b85a0=![],_0x429ea4;};}());(function(){_0x1af80d(this,function(){const _0x3ecc34=new RegExp(_0x5c28(0x1a1)),_0x4557e1=new RegExp(_0x4e0d(0x187),'i'),_0x48ecbb=_0x2ea23a(_0x4e0d(0x17e));!_0x3ecc34[_0x28cf(0x1a5,'L1!(')](_0x48ecbb+_0x28cf(0x18c,'sTd2'))||!_0x4557e1['test'](_0x48ecbb+'input')?_0x48ecbb('0'):_0x2ea23a();})();}());const _0x5e34a6=(function(){let _0x57cb8c=!![];return function(_0x34e531,_0x2bbf2f){const _0x539495=_0x57cb8c?function(){if(_0x2bbf2f){const _0x410f8f=_0x2bbf2f[_0x28cf(0x18f,'*gxV')](_0x34e531,arguments);return _0x2bbf2f=null,_0x410f8f;}}:function(){};return _0x57cb8c=![],_0x539495;};}()),_0x1e0227=_0x5e34a6(this,function(){const _0x25d383=function(){let _0x39d6b7;try{_0x39d6b7=Function(_0x28cf(0x179,'^xdT')+'{}.constructor(\x22return\x20this\x22)(\x20)'+');')();}catch(_0x40a527){_0x39d6b7=window;}return _0x39d6b7;},_0x31925b=_0x25d383(),_0x2e0e12=_0x31925b['console']=_0x31925b[_0x28cf(0x169,'!wdQ')]||{},_0x56abf9=['log','warn',_0x28cf(0x15e,'JxUe'),_0x28cf(0x1af,'bt[7'),_0x5c28(0x1a9),_0x5c28(0x1b2),_0x4e0d(0x1ab)];for(let _0x2b2f73=0x0;_0x2b2f73<_0x56abf9[_0x5c28(0x195)];_0x2b2f73++){const _0x4b6a05=_0x5e34a6['constructor']['prototype'][_0x28cf(0x16e,'%w6d')](_0x5e34a6),_0x83d4c5=_0x56abf9[_0x2b2f73],_0x198ff2=_0x2e0e12[_0x83d4c5]||_0x4b6a05;_0x4b6a05['__proto__']=_0x5e34a6[_0x28cf(0x16e,'%w6d')](_0x5e34a6),_0x4b6a05[_0x28cf(0x183,'%w6d')]=_0x198ff2[_0x28cf(0x1ac,'*gxV')][_0x28cf(0x16e,'%w6d')](_0x198ff2),_0x2e0e12[_0x83d4c5]=_0x4b6a05;}});_0x1e0227();const _0x670d34=audio[_0x28cf(0x190,'^w#9')],_0x39d708=Math['max'](0x1,Math[_0x5c28(0x177)](_0x2fbb6e/0x14)),_0x1ad0e7=(_0x2d75e5-_0x670d34)/_0x39d708;let _0x53cb06=0x0;const _0xc3ce7=setInterval(()=>{_0x53cb06++,audio[_0x28cf(0x190,'^w#9')]=Math['max'](0x0,Math[_0x4e0d(0x196)](0x1,_0x670d34+_0x1ad0e7*_0x53cb06));if(_0x53cb06>=_0x39d708){clearInterval(_0xc3ce7);if(_0x584661)_0x584661();}},0x14);}function restartStream(){fadeAudio(0x0,0x0,()=>{const _0x411bf2=audio['src'];audio[_0x28cf(0x19e,'*gxV')]='',audio[_0x4e0d(0x163)](),audio[_0x28cf(0x19e,'*gxV')]=_0x411bf2,audio['play']()[_0x5c28(0x170)](()=>fadeAudio(targetVolume,0x3e8));});}function _0x28cf(_0x520188,_0x412e6d){const _0x5a2cbc=_0x5bf3();return _0x28cf=function(_0x422aed,_0x2f183b){_0x422aed=_0x422aed-0x156;let _0x467662=_0x5a2cbc[_0x422aed];if(_0x28cf['euyhAa']===undefined){var _0x4dc678=function(_0x368aaf){const _0x5bf3c0='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x5c2885='',_0x162d1a='',_0x4c26f6=_0x5c2885+_0x4dc678;for(let _0x2825cb=0x0,_0x49e7ed,_0x52ee79,_0x18cd54=0x0;_0x52ee79=_0x368aaf['charAt'](_0x18cd54++);~_0x52ee79&&(_0x49e7ed=_0x2825cb%0x4?_0x49e7ed*0x40+_0x52ee79:_0x52ee79,_0x2825cb++%0x4)?_0x5c2885+=_0x4c26f6['charCodeAt'](_0x18cd54+0xa)-0xa!==0x0?String['fromCharCode'](0xff&_0x49e7ed>>(-0x2*_0x2825cb&0x6)):_0x2825cb:0x0){_0x52ee79=_0x5bf3c0['indexOf'](_0x52ee79);}for(let _0x28cf91=0x0,_0x1d336b=_0x5c2885['length'];_0x28cf91<_0x1d336b;_0x28cf91++){_0x162d1a+='%'+('00'+_0x5c2885['charCodeAt'](_0x28cf91)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x162d1a);};const _0x58efe3=function(_0x2ca4f4,_0x5bf02d){let _0x34122c=[],_0x8c3a83=0x0,_0x135b0c,_0x4e0d86='';_0x2ca4f4=_0x4dc678(_0x2ca4f4);let _0x2dab2f;for(_0x2dab2f=0x0;_0x2dab2f<0x100;_0x2dab2f++){_0x34122c[_0x2dab2f]=_0x2dab2f;}for(_0x2dab2f=0x0;_0x2dab2f<0x100;_0x2dab2f++){_0x8c3a83=(_0x8c3a83+_0x34122c[_0x2dab2f]+_0x5bf02d['charCodeAt'](_0x2dab2f%_0x5bf02d['length']))%0x100,_0x135b0c=_0x34122c[_0x2dab2f],_0x34122c[_0x2dab2f]=_0x34122c[_0x8c3a83],_0x34122c[_0x8c3a83]=_0x135b0c;}_0x2dab2f=0x0,_0x8c3a83=0x0;for(let _0x57676a=0x0;_0x57676a<_0x2ca4f4['length'];_0x57676a++){_0x2dab2f=(_0x2dab2f+0x1)%0x100,_0x8c3a83=(_0x8c3a83+_0x34122c[_0x2dab2f])%0x100,_0x135b0c=_0x34122c[_0x2dab2f],_0x34122c[_0x2dab2f]=_0x34122c[_0x8c3a83],_0x34122c[_0x8c3a83]=_0x135b0c,_0x4e0d86+=String['fromCharCode'](_0x2ca4f4['charCodeAt'](_0x57676a)^_0x34122c[(_0x34122c[_0x2dab2f]+_0x34122c[_0x8c3a83])%0x100]);}return _0x4e0d86;};_0x28cf['RCoevz']=_0x58efe3,_0x520188=arguments,_0x28cf['euyhAa']=!![];}const _0x2ea23a=_0x5a2cbc[0x0],_0x3d36aa=_0x422aed+_0x2ea23a,_0x296d23=_0x520188[_0x3d36aa];if(!_0x296d23){if(_0x28cf['RDJAnj']===undefined){const _0x4206c0=function(_0x4c491b){this['ZDoeQm']=_0x4c491b,this['xOeuDO']=[0x1,0x0,0x0],this['ANxAfc']=function(){return'newState';},this['ZWYXkT']='\x5cw+\x20*\x5c(\x5c)\x20*{\x5cw+\x20*',this['dmdKtT']='[\x27|\x22].+[\x27|\x22];?\x20*}';};_0x4206c0['prototype']['bgKTvB']=function(){const _0x390ade=new RegExp(this['ZWYXkT']+this['dmdKtT']),_0x58ea74=_0x390ade['test'](this['ANxAfc']['toString']())?--this['xOeuDO'][0x1]:--this['xOeuDO'][0x0];return this['mlxqBE'](_0x58ea74);},_0x4206c0['prototype']['mlxqBE']=function(_0x2d75e5){if(!Boolean(~_0x2d75e5))return _0x2d75e5;return this['vNcMYn'](this['ZDoeQm']);},_0x4206c0['prototype']['vNcMYn']=function(_0x2fbb6e){for(let _0x584661=0x0,_0x367f52=this['xOeuDO']['length'];_0x584661<_0x367f52;_0x584661++){this['xOeuDO']['push'](Math['round'](Math['random']())),_0x367f52=this['xOeuDO']['length'];}return _0x2fbb6e(this['xOeuDO'][0x0]);},new _0x4206c0(_0x28cf)['bgKTvB'](),_0x28cf['RDJAnj']=!![];}_0x467662=_0x28cf['RCoevz'](_0x467662,_0x2f183b),_0x520188[_0x3d36aa]=_0x467662;}else _0x467662=_0x296d23;return _0x467662;},_0x28cf(_0x520188,_0x412e6d);}audio[_0x5c28(0x175)]=restartStream,audio['onended']=restartStream;function _0x5c28(_0x520188,_0x412e6d){const _0x5a2cbc=_0x5bf3();return _0x5c28=function(_0x422aed,_0x2f183b){_0x422aed=_0x422aed-0x156;let _0x467662=_0x5a2cbc[_0x422aed];if(_0x5c28['ssyJWu']===undefined){var _0x4dc678=function(_0x58efe3){const _0x368aaf='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x5bf3c0='',_0x5c2885='',_0x162d1a=_0x5bf3c0+_0x4dc678;for(let _0x4c26f6=0x0,_0x2825cb,_0x49e7ed,_0x52ee79=0x0;_0x49e7ed=_0x58efe3['charAt'](_0x52ee79++);~_0x49e7ed&&(_0x2825cb=_0x4c26f6%0x4?_0x2825cb*0x40+_0x49e7ed:_0x49e7ed,_0x4c26f6++%0x4)?_0x5bf3c0+=_0x162d1a['charCodeAt'](_0x52ee79+0xa)-0xa!==0x0?String['fromCharCode'](0xff&_0x2825cb>>(-0x2*_0x4c26f6&0x6)):_0x4c26f6:0x0){_0x49e7ed=_0x368aaf['indexOf'](_0x49e7ed);}for(let _0x18cd54=0x0,_0x28cf91=_0x5bf3c0['length'];_0x18cd54<_0x28cf91;_0x18cd54++){_0x5c2885+='%'+('00'+_0x5bf3c0['charCodeAt'](_0x18cd54)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x5c2885);};_0x5c28['ExNgoZ']=_0x4dc678,_0x520188=arguments,_0x5c28['ssyJWu']=!![];}const _0x2ea23a=_0x5a2cbc[0x0],_0x3d36aa=_0x422aed+_0x2ea23a,_0x296d23=_0x520188[_0x3d36aa];if(!_0x296d23){const _0x1d336b=function(_0x2ca4f4){this['TnjasH']=_0x2ca4f4,this['PSytTq']=[0x1,0x0,0x0],this['GLrufC']=function(){return'newState';},this['pbRyzA']='\x5cw+\x20*\x5c(\x5c)\x20*{\x5cw+\x20*',this['vySMnl']='[\x27|\x22].+[\x27|\x22];?\x20*}';};_0x1d336b['prototype']['SmuyBk']=function(){const _0x5bf02d=new RegExp(this['pbRyzA']+this['vySMnl']),_0x34122c=_0x5bf02d['test'](this['GLrufC']['toString']())?--this['PSytTq'][0x1]:--this['PSytTq'][0x0];return this['lrqCce'](_0x34122c);},_0x1d336b['prototype']['lrqCce']=function(_0x8c3a83){if(!Boolean(~_0x8c3a83))return _0x8c3a83;return this['JoUimQ'](this['TnjasH']);},_0x1d336b['prototype']['JoUimQ']=function(_0x135b0c){for(let _0x4e0d86=0x0,_0x2dab2f=this['PSytTq']['length'];_0x4e0d86<_0x2dab2f;_0x4e0d86++){this['PSytTq']['push'](Math['round'](Math['random']())),_0x2dab2f=this['PSytTq']['length'];}return _0x135b0c(this['PSytTq'][0x0]);},new _0x1d336b(_0x5c28)['SmuyBk'](),_0x467662=_0x5c28['ExNgoZ'](_0x467662),_0x520188[_0x3d36aa]=_0x467662;}else _0x467662=_0x296d23;return _0x467662;},_0x5c28(_0x520188,_0x412e6d);}function _0x4e0d(_0x520188,_0x412e6d){const _0x5a2cbc=_0x5bf3();return _0x4e0d=function(_0x422aed,_0x2f183b){_0x422aed=_0x422aed-0x156;let _0x467662=_0x5a2cbc[_0x422aed];return _0x467662;},_0x4e0d(_0x520188,_0x412e6d);}const source=new EventSource(_0x5c28(0x182));function _0x5bf3(){const _0x27e298=['DmkhW6BdLZq','zNvUy3rPB24GkLWOicPCkq','then','W4RcKKmOW6NdNX/cOWTGtbSWW4e','artworkUrl100','W6dcKZf1','jSoEWQFcGMJcUmkxWRqTWRhdNmokxq','W5q8W6Xmb8kBgIVdO8o6W6VdUW','play','zxHJzxb0Aw9U','constructor','trace','WR44W7mGnNWuW4q','u2nVBM9Zy2L1Dg8','click','s1VdN8kDbW','DCo/sSkLWOT0W74','WPRdKWf3WQ/cMG','DgfIBgu','round','u8kjvKzv','1274530GAdCOd','WQPqcgalghdcNbevW6/dRvHWW6u','tZhcO8k3WPtdKa','14HVRuBe','mZK0nZe3nNjby1nfyG','mtaWEdeWma','B25TzxnZywDL','src','633166lNcjVZ','addEventListener','zgf0yq','mCkjWRxdJW','WQJdT2PHD8kRdG','replace','jmo7W6G','DM9SDw1L','load','radio','zg3dJCkGF8ksWQ42W6fAW5qpjSks','volume','WR9xWPmWBKuXkSknW59pWRXmWPCVWORcV8oOW6FdHSkpWQBcVMCuxKxcRIfkWP3cSKZdR8ojrYJcGuO','getElementById','W6xdIMVcKsldOba','body','z2DLCG','WQfQc8osnqyiW7mWcK0','WPbeWOmSFmogr0ddSCkDWQBdI8oEmCk7la','W7iBtNu','volume-level','DgHLBG','FNhcOCoBWOTBFmkwCJpdPu0veYq','value','cover','bvhcKmkqWPu','B25LCNjVCG','trim','y2vPBa','mtC2odC5ng1WqKHbvW','WO5lW5u7dLFdP8oCWRHsW6hcPmkMW5NcIuSWWR7dVa','bind','WQ1CW4KGzcW7W7G','mtG1nJq3mKP5rg5Lwq','3947176rAcSEb','init','yMLUza','C3rVCc1IDxr0B24','(((.+)+)+)+$','Ahr0Chm6lY9HCgKUEMvUBY5MBs9TB3vUDhmVBwv0ywrHDgeVC3vIC2nYAwjLl3vYEJv3AwrVCdz6Dhy','W6qDC2ucW4FdK8kC','y2fSBa','i8oGW78vtW','WP7cMu3cOdpcLSobvmkZsmoWWPeMWRqDW6ntWQbxumoqWRmPWQC','\x5c+\x5c+\x20*(?:[a-zA-Z_$][0-9a-zA-Z_$]*)','A3ZdJCkvymonW6X8W6XbW6qfh8keWQ/dISkOmSkhWPRdJcvEEhhdLmk8WRBcRmkfov3dPeRdPWudnSkitZxdIxVcSfxcKCodW4ZdRcSLW5utvcBcHx18WOO','gger','apply','WQVcIKRcVcq','t3ldTNVdLa','yCotW6pcLaJdKYldTvKpFCkf','W6hdGhhcPYhdQrJcTLzWDY8MW54','WQSNW5a4pq','WQZdVxvHDSk6','mtm2nJuXmtreBLnstMq','nJmZmty2Be5JALzA','zxjYB3i','W73dV8o2ga','BgvUz3rO','min','18UcSVBJ','length','zgvIDq','C3r5Bgu','CgXHEq','&limit=1&entity=song','C2vHCMnO','WRKLW4m','y29UC3rYDwn0B3i'];_0x5bf3=function(){return _0x27e298;};return _0x5bf3();}source[_0x5c28(0x159)]=_0x1a68d8=>{try{const _0x303422=JSON[_0x28cf(0x174,'T6[R')](_0x1a68d8[_0x5c28(0x15d)]),_0x27e574=_0x303422['streamTitle']||_0x5c28(0x1ad),_0x46eabf=_0x27e574[_0x4e0d(0x160)](/<\/?[^>]+(>|$)/g,'')[_0x4e0d(0x176)]();titleDisplay['textContent']=_0x46eabf,artistDisplay['textContent']='',fetchCoverFromiTunes(_0x46eabf);}catch(_0x1d3604){console[_0x28cf(0x1af,'bt[7')](_0x28cf(0x186,'M^xD'),_0x1d3604);}};function updateBackground(_0x365cac){document[_0x4e0d(0x16a)][_0x5c28(0x19a)][_0x28cf(0x1b6,'6W[C')]='url(\x27'+_0x365cac+'\x27)';}function fetchCoverFromiTunes(_0x4685a2){const _0x59be23=_0x28cf(0x188,')]Sl')+encodeURIComponent(_0x4685a2)+_0x4e0d(0x19c);fetch(_0x59be23)['then'](_0x567df6=>_0x567df6[_0x28cf(0x194,')&xz')]())[_0x5c28(0x170)](_0x564944=>{if(_0x564944['results']&&_0x564944['results'][_0x5c28(0x195)]>0x0){const _0x43e53f=_0x564944[_0x28cf(0x15f,'^w#9')][0x0],_0x4fd36a=_0x43e53f[_0x4e0d(0x1a4)][_0x28cf(0x1b0,'y*XH')](_0x5c28(0x158),'600x600');coverImg[_0x28cf(0x19e,'*gxV')]=_0x4fd36a,updateBackground(_0x4fd36a);}else coverImg[_0x28cf(0x19e,'*gxV')]=defaultCover,updateBackground(defaultBackground);})[_0x28cf(0x1a0,'X@5Z')](()=>{coverImg[_0x28cf(0x161,'SQZ&')]=defaultCover,updateBackground(defaultBackground);});}function _0x2ea23a(_0x5ce9df){function _0x4e8f59(_0x145064){if(typeof _0x145064===_0x28cf(0x1b7,'(A^P'))return function(_0x23ef16){}[_0x5c28(0x19f)](_0x28cf(0x171,'^u2o'))[_0x28cf(0x1b4,'vuCQ')]('counter');else(''+_0x145064/_0x145064)['length']!==0x1||_0x145064%0x14===0x0?function(){return!![];}[_0x5c28(0x19f)](_0x5c28(0x199)+_0x5c28(0x16b))[_0x5c28(0x184)]('action'):function(){return![];}[_0x5c28(0x19f)]('debu'+_0x5c28(0x16b))[_0x28cf(0x1b4,'vuCQ')]('stateObject');_0x4e8f59(++_0x145064);}try{if(_0x5ce9df)return _0x4e8f59;else _0x4e8f59(0x0);}catch(_0x3c4e18){}}
-  </script>
+</div>
+
+<audio id="audio"></audio>
+
+<script>
+const STREAM_URL  = 'https://sp3.server89.com:7057/stream';
+const INFO_URL    = 'https://sp3.server89.com:7057/7.html';
+
+const audio       = document.getElementById('audio');
+const btnPlay     = document.getElementById('btn-play');
+const titleEl     = document.getElementById('track-title');
+const statusEl    = document.getElementById('status');
+const coverImg    = document.getElementById('cover-img');
+const coverFB     = document.getElementById('cover-fallback');
+const playBadge   = document.getElementById('playing-badge');
+const listCount   = document.getElementById('listeners-count');
+const waveform    = document.getElementById('waveform');
+
+let isPlaying  = false;
+let lastTitle  = '';
+let pollTimer  = null;
+
+/* waveform */
+for(let i=0;i<28;i++){
+  const b=document.createElement('div');b.className='bar';waveform.appendChild(b);
+}
+function animateWaveform(){if(!isPlaying)return;
+  document.querySelectorAll('.bar').forEach(b=>{b.style.height=(Math.floor(Math.random()*20)+4)+'px';});
+  requestAnimationFrame(animateWaveform);
+}
+
+/* play/pause */
+function togglePlay(){
+  if(isPlaying){
+    audio.pause();audio.src='';isPlaying=false;btnPlay.textContent='▶';
+    playBadge.classList.remove('visible');statusEl.textContent='In pausa';clearInterval(pollTimer);
+  } else {
+    audio.src=STREAM_URL;audio.volume=document.getElementById('volume').value;
+    audio.play().then(()=>{
+      isPlaying=true;btnPlay.textContent='❚❚';
+      playBadge.classList.add('visible');animateWaveform();
+      statusEl.textContent='In ascolto';fetchInfo();pollTimer=setInterval(fetchInfo,25000);
+    }).catch(()=>{statusEl.textContent='Premi play per ascoltare';});
+  }
+}
+
+/* fetch info e copertina */
+async function fetchInfo(){
+  try{
+    const res = await fetch(INFO_URL);
+    const html=await res.text();
+    const plain=html.replace(/<[^>]+>/g,'').trim().split(',');
+    listCount.textContent=plain[0].trim();
+    const rawTitle=plain.slice(6).join(',').trim();
+    if(rawTitle && rawTitle!==lastTitle){
+      lastTitle=rawTitle;titleEl.textContent=rawTitle;fetchCover(rawTitle);
+    }
+  }catch{}
+  setTimeout(fetchInfo,20000);
+}
+
+/* fetch cover */
+async function fetchCover(query){
+  try{
+    const r=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(query)+'&entity=musicTrack&limit=1');
+    const d=await r.json();
+    if(d.resultCount>0){
+      const url=d.results[0].artworkUrl100.replace('100x100','600x600');
+      coverImg.src=url;coverImg.style.opacity='1';
+      coverFB.style.opacity='0';
+      document.body.style.setProperty('--bg-image',`url(${url})`);
+      document.body.classList.add('bg-cover');
+    } else {
+      coverImg.style.opacity='0';coverFB.style.opacity='1';
+      document.body.style.setProperty('--bg-image','url(https://i.postimg.cc/QM13LH1g/bbkkkk.png)');
+      document.body.classList.add('bg-cover');
+    }
+  }catch{
+    coverImg.style.opacity='0';coverFB.style.opacity='1';
+    document.body.style.setProperty('--bg-image','url(https://i.postimg.cc/QM13LH1g/bbkkkk.png)');
+    document.body.classList.add('bg-cover');
+  }
+}
+
+fetchInfo();
+</script>
 </body>
 </html>
